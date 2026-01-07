@@ -1,4 +1,3 @@
-
 // index.js - Node.js + Express Backend
 const express = require('express');
 const multer = require('multer');
@@ -10,6 +9,9 @@ const PORT = process.env.PORT || 3000;
 
 // Enable CORS
 app.use(cors());
+
+// ✅ ADD THIS: serve static files (VERY IMPORTANT)
+app.use(express.static(path.join(__dirname)));
 
 // Multer setup for file uploads (memory storage for simplicity)
 const storage = multer.memoryStorage();
@@ -41,14 +43,13 @@ app.post('/render', upload.fields([
   { name: 'audio', maxCount: 1 }
 ]), async (req, res) => {
   try {
-    // Validate files exist
     if (!req.files?.image?.[0]) {
       return res.status(400).json({
         status: 'error',
         error: 'Image file is required'
       });
     }
-    
+
     if (!req.files?.audio?.[0]) {
       return res.status(400).json({
         status: 'error',
@@ -62,10 +63,10 @@ app.post('/render', upload.fields([
     console.log(`Received image: ${imageFile.originalname} (${imageFile.size} bytes)`);
     console.log(`Received audio: ${audioFile.originalname} (${audioFile.size} bytes)`);
 
-    // Mock render delay (2-3 seconds)
+    // Mock render delay (2.5 sec)
     await new Promise(resolve => setTimeout(resolve, 2500));
 
-    // Return mock success response
+    // ✅ Return sample video URL (now it WILL exist)
     res.json({
       status: 'success',
       videoUrl: 'https://backend-api-c1hc.onrender.com/sample-output.mp4'
